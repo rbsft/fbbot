@@ -1,4 +1,4 @@
-module github.com/michlabs/fbbot
+module github.com/rbsft/fbbot
 
 go 1.13
 
