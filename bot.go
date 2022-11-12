@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/michlabs/fbbot/memory"
+	"github.com/rbsft/fbbot/memory"
 	"github.com/sirupsen/logrus"
 )
 

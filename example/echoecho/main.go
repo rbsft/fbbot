@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/michlabs/fbbot"
+	"github.com/rbsft/fbbot"
 )
 
 const VERIFYTOKEN string = "your_secure_token"
