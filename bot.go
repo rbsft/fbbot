@@ -17,11 +17,9 @@ import (
 type Bot struct {
 	// User defined fields
 	Page            Page // TODO: How to find out it?
-	port            int
 	verifyToken     string
 	appSecret       string
 	pageAccessToken string
-	greeting_text   string
 
 	// Handler
 	messageHandlers        []MessageHandler
@@ -38,19 +36,15 @@ type Bot struct {
 
 	// Framework
 	Logger *logrus.Logger
-	mux    *http.ServeMux
 }
 
-func New(port int, verifyToken string, appSecret string, pageAccessToken string) *Bot {
+func New(verifyToken string, appSecret string, pageAccessToken string) *Bot {
 	var b Bot = Bot{
-		port:            port,
 		verifyToken:     verifyToken,
 		appSecret:       appSecret,
 		pageAccessToken: pageAccessToken,
-		mux:             http.NewServeMux(),
 		Logger:          logrus.New(),
 	}
-	b.mux.HandleFunc(WebhookURL, b.handle)
 	b.LTMemory = memory.New("ephemeral")
 	b.STMemory = memory.New("ephemeral")
 	bot = &b // For using outside of bot methods (User struct)
@@ -96,9 +90,6 @@ func (b *Bot) Run() {
 	if len(b.paymentHandlers) == 0 {
 		b.Logger.Warn("Payment Handler is missing")
 	}
-
-	b.Logger.Infof("Bot is running at :%d%s", b.port, WebhookURL)
-	b.Logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", b.port), b.mux))
 }
 
 func (b *Bot) AddMessageHandler(h MessageHandler) {
@@ -133,7 +124,7 @@ func (b *Bot) AddPaymentHandler(h PaymentHandler) {
 	b.paymentHandlers = append(b.paymentHandlers, h)
 }
 
-func (b *Bot) handle(w http.ResponseWriter, r *http.Request) {
+func (b *Bot) Handle(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		b.verify(w, r)
 		return
