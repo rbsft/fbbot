@@ -27,22 +27,15 @@ func NewTextMessage(text string) *TextMessage {
 
 // ButtonMessage contains text and buttons
 type ButtonMessage struct {
-	// // Text is text content of the message
-	// // must be UTF-8, 320 character limit
-	// // not required
-	// Text string
-
-	// // MainText is text that appears in main body
-	// // required
-	// MainText string
 	Text string
 	Noti string
 
 	Buttons []Button
 }
 
-func NewButtonMessage() *ButtonMessage {
+func NewButtonMessage(text string) *ButtonMessage {
 	var b ButtonMessage
+	b.Text = text
 	b.Noti = NotiRegular
 	return &b
 }
