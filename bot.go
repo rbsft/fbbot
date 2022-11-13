@@ -389,33 +389,31 @@ func (b *Bot) MarkSeen(r User) error {
 func (b *Bot) Subscribe() error {
 	data := make(map[string]interface{})
 	data["subscribed_fields"] = []string{
-		"message_mention",
 		"messages",
-		"message_reactions",
-		"messaging_account_linking",
-		"messaging_checkout_updates",
-		"message_echoes",
-		"message_deliveries",
+		"messaging_postbacks",
 		"messaging_optins",
 		"messaging_optouts",
-		"messaging_payments",
-		"messaging_postbacks",
-		"messaging_pre_checkouts",
+		"message_deliveries",
 		"message_reads",
+		"messaging_payments",
+		"messaging_pre_checkouts",
+		"messaging_checkout_updates",
+		"messaging_account_linking",
 		"messaging_referrals",
+		"standby",
 		"messaging_handovers",
 		"messaging_policy_enforcement",
-		"messaging_page_feedback",
-		"messaging_appointments",
-		"messaging_direct_sends",
-		"messaging_fblogin_account_linking",
+		"message_reactions",
+		"inbox_labels",
 		"messaging_feedback",
+		"messaging_customer_information",
+		"whatsapp_messages",
 	}
 	if resp, err := b.httppost(APIEndpoint+"/me/subscribed_apps", data); err != nil {
 		b.Logger.WithFields(logrus.Fields{"error": err, "resp": resp}).Error("Failed to subscribe")
 		return err
 	}
-	b.Logger.Info("Success to subscribe your page")
+	b.Logger.Info("Successfully subscribed to your page")
 	return nil
 }
 
