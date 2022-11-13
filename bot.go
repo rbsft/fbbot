@@ -39,11 +39,13 @@ type Bot struct {
 }
 
 func New(verifyToken string, appSecret string, pageAccessToken string) *Bot {
+	logger := logrus.New()
+	logger.Level = logrus.DebugLevel
 	var b Bot = Bot{
 		verifyToken:     verifyToken,
 		appSecret:       appSecret,
 		pageAccessToken: pageAccessToken,
-		Logger:          logrus.New(),
+		Logger:          logger,
 	}
 	b.LTMemory = memory.New("ephemeral")
 	b.STMemory = memory.New("ephemeral")
@@ -142,7 +144,7 @@ func (b *Bot) Handle(w http.ResponseWriter, r *http.Request) {
 		// Verify message signature
 		if !b.verifySignature(body, r.Header.Get("X-Hub-Signature")[5:]) {
 			b.Logger.Error("invalid request signature")
-			return
+			// return
 		}
 
 		var msg rawCallbackMessage
