@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/rbsft/fbbot/memory"
 	"github.com/sirupsen/logrus"
@@ -145,11 +146,6 @@ func (b *Bot) Handle(w http.ResponseWriter, r *http.Request) {
 		}
 		b.Logger.WithFields(logrus.Fields{"request": string(body)}).Debug("New request:")
 
-		// Verify message signature
-		if !b.verifySignature(body, r.Header.Get("X-Hub-Signature")[5:]) {
-			b.Logger.Debug("invalid request signature")
-		}
-
 		var msg rawCallbackMessage
 		if err := json.Unmarshal(body, &msg); err != nil {
 			b.Logger.WithFields(logrus.Fields{"body": string(body), "error": err.Error()}).Error("Failed to unmarshal request body")
@@ -238,7 +234,7 @@ func (b *Bot) sendTextMessage(r User, m *TextMessage) error {
 	data["messaging_type"] = "RESPONSE"
 	data["notification_type"] = m.Noti
 	data["recipient"] = map[string]string{"id": r.ID}
-	data["message"] = map[string]string{"text": m.Text}
+	data["message"] = map[string]string{"text": strings.ToValidUTF8(m.Text, "")}
 
 	_, err := b.httppost(SendAPIEndpoint, data)
 	if err != nil {
@@ -400,19 +396,8 @@ func (b *Bot) Subscribe() error {
 		"messaging_optouts",
 		"message_deliveries",
 		"message_reads",
-		"messaging_payments",
-		"messaging_pre_checkouts",
-		"messaging_checkout_updates",
-		"messaging_account_linking",
-		"messaging_referrals",
-		"standby",
-		"messaging_handovers",
-		"messaging_policy_enforcement",
 		"message_reactions",
-		"inbox_labels",
 		"messaging_feedback",
-		"messaging_customer_information",
-		"whatsapp_messages",
 	}
 	if resp, err := b.httppost(APIEndpoint+"/me/subscribed_apps", data); err != nil {
 		b.Logger.WithFields(logrus.Fields{"error": err, "resp": resp}).Error("Failed to subscribe")
